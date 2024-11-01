@@ -1,0 +1,35 @@
+#include "DHTesp.h"
+
+#define RELAY_PIN 15
+#define DHTPIN 21
+
+DHTesp dht;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(RELAY_PIN, OUTPUT); 
+  dht.setup(DHTPIN, DHTesp::DHT22);
+}
+
+void loop() {
+  TempAndHumidity data = dht.getTempAndHumidity();
+  float temp = data.temperature;
+
+  if (!isnan(temp)) { 
+    Serial.print("Suhu: ");
+    Serial.print(temp);
+    Serial.println("°C");
+
+    if (temp > 30) {
+      digitalWrite(RELAY_PIN, HIGH); 
+      Serial.println("KIPAS HIDUP");
+    } else {
+      digitalWrite(RELAY_PIN, LOW);  
+      Serial.println("KIPAS MATI");
+    }
+  } else {
+    Serial.println("Gagal membaca suhu!");
+  }
+
+  delay(2000); 
+}
